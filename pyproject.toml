@@ -1,0 +1,27 @@
+[project]
+name = 'slots'
+readme = 'README.md'
+description = 'gambling'
+license = 'MIT'
+dependencies = []
+dynamic = ['version']
+
+[project.optional-dependencies]
+dev = ['ruff']
+
+[project.scripts]
+slots = 'slots.__main__:cli'
+
+[tool.ruff]
+line-length = 79
+[tool.ruff.format]
+quote-style = 'single'
+[tool.ruff.lint]
+extend-select = ['I', 'E501']
+
+[tool.hatch.version]
+path = 'src/slots/__version__.py'
+
+[build-system]
+requires = ['hatchling']
+build-backend = 'hatchling.build'
