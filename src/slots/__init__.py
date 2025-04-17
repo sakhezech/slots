@@ -1,16 +1,20 @@
 import random
 import time
-from typing import Any, Generator
+from typing import Generator
 
 
-class Column:
-    def __init__(self, spins: int, start_idx: int = 0) -> None:
+class Column[T]:
+    def __init__(
+        self,
+        chars: list[tuple[T, str]],
+        spins: int,
+        start_idx: int = 0,
+    ) -> None:
         self.chars: list[str] = []
         # HACK: hardcoded characters
         # get a list of characters, paddings, and separators here
         # and construct the list
-        val_char = [(num, str(num)) for num in range(0, 10)]
-        for _, char in val_char:
+        for _, char in chars:
             self.chars.extend(
                 [
                     '-----',
@@ -21,7 +25,7 @@ class Column:
             )
         self.char_size = 3
         self.sep_size = 1
-        self.num_of_chars = 10
+        self.num_of_chars = len(chars)
 
         self.count = 0
 
@@ -31,7 +35,7 @@ class Column:
         self.steps_to_take = spins * self.offset
 
         self._idx_to_val = {
-            i * self.offset: val for i, (val, _) in enumerate(val_char)
+            i * self.offset: val for i, (val, _) in enumerate(chars)
         }
 
     @property
@@ -44,7 +48,7 @@ class Column:
         if (self._idx > self.max_idx) or (self._idx < 0):
             self._idx %= self.max_idx
 
-    def get_value(self) -> Any:
+    def get_value(self) -> T:
         return self._idx_to_val[self.idx]
 
     def get_frame(self) -> list[str]:
@@ -66,9 +70,10 @@ class Column:
         return done
 
 
-class Slots:
+class Slots[T]:
     def __init__(
         self,
+        chars: list[tuple[T, str]],
         num_of_columns: int = 3,
         seed: int | str | bytes | bytearray | None = None,
     ) -> None:
@@ -80,9 +85,9 @@ class Slots:
         for _ in range(self.num_of_columns):
             # HACK: arbitrary numbers
             spin_num += self.rand.randint(1, 10)
-            self.columns.append(Column(spin_num))
+            self.columns.append(Column(chars, spin_num))
 
-    def get_values(self) -> list[Any]:
+    def get_values(self) -> list[T]:
         return [column.get_value() for column in self.columns]
 
     def get_frames(self) -> Generator[list[str]]:
