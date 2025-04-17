@@ -25,9 +25,19 @@ class Column:
         self.count = 0
 
         self.offset = self.char_size + self.sep_size
-        self.idx = start_idx * self.offset
         self.max_idx = self.num_of_chars * self.offset
+        self.idx = start_idx * self.offset
         self.steps_to_take = spins * self.offset
+
+    @property
+    def idx(self) -> int:
+        return self._idx
+
+    @idx.setter
+    def idx(self, value: int) -> None:
+        self._idx = value
+        if (self._idx > self.max_idx) or (self._idx < 0):
+            self._idx %= self.max_idx
 
     def get_frame(self) -> list[str]:
         start = self.idx
@@ -44,11 +54,7 @@ class Column:
         if self.count < self.steps_to_take:
             done = False
             self.count += 1
-
             self.idx += 1
-            if self.idx > self.max_idx:
-                self.idx = 1
-
         return done
 
 
