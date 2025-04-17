@@ -62,7 +62,7 @@ class Slots:
         spin_num = 0
         for _ in range(self.num_of_columns):
             # HACK: arbitrary numbers
-            spin_num += self.rand.randint(5, 10)
+            spin_num += self.rand.randint(1, 10)
             self.columns.append(Column(spin_num))
 
     def spin(self) -> None:
