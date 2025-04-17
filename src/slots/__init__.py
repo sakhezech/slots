@@ -29,7 +29,7 @@ class Column:
         self.max_idx = self.num_of_chars * self.offset
         self.steps_to_take = spins * self.offset
 
-    def get_frame(self) -> tuple[list[str], bool]:
+    def get_frame(self) -> list[str]:
         start = self.idx
         end = self.idx + self.offset + self.sep_size
 
@@ -37,7 +37,9 @@ class Column:
             frame = self.chars[start:] + self.chars[: end - len(self.chars)]
         else:
             frame = self.chars[start:end]
+        return frame
 
+    def advance_frame(self) -> bool:
         done = True
         if self.count < self.steps_to_take:
             done = False
@@ -47,7 +49,7 @@ class Column:
             if self.idx > self.max_idx:
                 self.idx = 1
 
-        return frame, done
+        return done
 
 
 class Slots:
@@ -68,9 +70,8 @@ class Slots:
 
     def get_frames(self) -> Generator[list[str]]:
         while True:
-            data = [column.get_frame() for column in self.columns]
-            frames = [frame_and_status[0] for frame_and_status in data]
-            statuses = [frame_and_status[1] for frame_and_status in data]
+            frames = [column.get_frame() for column in self.columns]
+            statuses = [column.advance_frame() for column in self.columns]
 
             height = len(frames[0])
             main_frame = [
