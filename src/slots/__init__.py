@@ -1,5 +1,6 @@
 import random
 import time
+from typing import Generator
 
 
 class Column:
@@ -65,7 +66,7 @@ class Slots:
             spin_num += self.rand.randint(1, 10)
             self.columns.append(Column(spin_num))
 
-    def spin(self) -> None:
+    def get_frames(self) -> Generator[list[str]]:
         while True:
             data = [column.get_frame() for column in self.columns]
             frames = [frame_and_status[0] for frame_and_status in data]
@@ -77,9 +78,19 @@ class Slots:
                 for idx in range(height)
             ]
 
-            print('\n'.join(main_frame))
+            yield main_frame
+
             if all(statuses):
                 break
+
+    def spin(self) -> None:
+        frame_lines = None
+
+        for frame_lines in self.get_frames():
+            print('\n'.join(frame_lines))
             # HACK: arbitrary time
             time.sleep(0.1)
-            print(f'\x1b[{height}A\r\x1b[J', end='')
+            print(f'\x1b[{len(frame_lines)}A\r\x1b[J', end='')
+
+        if frame_lines:
+            print('\n'.join(frame_lines))
