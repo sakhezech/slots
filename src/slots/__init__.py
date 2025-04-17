@@ -1,6 +1,6 @@
 import random
 import time
-from typing import Generator
+from typing import Any, Generator
 
 
 class Column:
@@ -9,7 +9,8 @@ class Column:
         # HACK: hardcoded characters
         # get a list of characters, paddings, and separators here
         # and construct the list
-        for char in range(0, 10):
+        val_char = [(num, str(num)) for num in range(0, 10)]
+        for _, char in val_char:
             self.chars.extend(
                 [
                     '-----',
@@ -29,6 +30,10 @@ class Column:
         self.idx = start_idx * self.offset
         self.steps_to_take = spins * self.offset
 
+        self._idx_to_val = {
+            i * self.offset: val for i, (val, _) in enumerate(val_char)
+        }
+
     @property
     def idx(self) -> int:
         return self._idx
@@ -38,6 +43,9 @@ class Column:
         self._idx = value
         if (self._idx > self.max_idx) or (self._idx < 0):
             self._idx %= self.max_idx
+
+    def get_value(self) -> Any:
+        return self._idx_to_val[self.idx]
 
     def get_frame(self) -> list[str]:
         start = self.idx
@@ -73,6 +81,9 @@ class Slots:
             # HACK: arbitrary numbers
             spin_num += self.rand.randint(1, 10)
             self.columns.append(Column(spin_num))
+
+    def get_values(self) -> list[Any]:
+        return [column.get_value() for column in self.columns]
 
     def get_frames(self) -> Generator[list[str]]:
         while True:
