@@ -45,7 +45,7 @@ class Column[T]:
     @idx.setter
     def idx(self, value: int) -> None:
         self._idx = value
-        if (self._idx > self.max_idx) or (self._idx < 0):
+        if (self._idx >= self.max_idx) or (self._idx < 0):
             self._idx %= self.max_idx
 
     def get_value(self) -> T:
