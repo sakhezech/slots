@@ -85,6 +85,8 @@ def user_cli(slots: Slots, argv: Sequence[str] | None = None) -> None:
 
 
 def run_slots(slots: Slots, args) -> None:
+    if args.period <= 0:
+        print_and_exit(f'period must be greater than 0: {args.period}')
     if args.rig:
         slots.rig_values(args.rig)
     else:

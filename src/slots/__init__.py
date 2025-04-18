@@ -150,6 +150,10 @@ class Slots[T]:
                 break
 
     def spin(self, time_between_frames: float = 0.1) -> None:
+        if time_between_frames <= 0:
+            raise ValueError(
+                f'period must be greater than 0: {time_between_frames}'
+            )
         frame_lines = None
 
         for frame_lines in self.get_frames():
