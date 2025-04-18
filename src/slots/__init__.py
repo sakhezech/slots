@@ -6,27 +6,37 @@ from typing import Collection, Generator, Sequence
 class Column[T]:
     def __init__(
         self,
-        chars: Collection[tuple[T, str]],
+        chars: Collection[tuple[T, Sequence[str]]],
         spins: int = 0,
         start_idx: int = 0,
     ) -> None:
         self.charset = chars
         self.spins = spins
 
+        height = -1
+        width = -1
+
+        if not self.charset:
+            raise ValueError('charset has to have at least 1 character')
+
         self.charsheet: list[str] = []
-        # HACK: hardcoded characters
-        # get a list of characters, paddings, and separators here
-        # and construct the list
-        for _, char in chars:
+        for _, char in self.charset:
+            if height == -1:
+                height = len(char)
+                width = len(char[0])
+            if len(char) != height or not all(
+                len(line) == width for line in char
+            ):
+                raise ValueError('not all characters have the same size')
+
             self.charsheet.extend(
                 [
-                    '-----',
-                    '|   |',
-                    f'| {char} |',
-                    '|   |',
+                    '-' * width,
+                    *char,
                 ]
             )
-        self.char_size = 3
+
+        self.char_size = height
         self.sep_size = 1
 
         self.count = 0
@@ -87,7 +97,7 @@ class Column[T]:
 
 class Slots[T]:
     def __init__(
-        self, chars: Collection[tuple[T, str]], columns: int = 3
+        self, chars: Collection[tuple[T, Sequence[str]]], columns: int = 3
     ) -> None:
         self.columns = [Column(chars) for _ in range(columns)]
 
