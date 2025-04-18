@@ -99,6 +99,10 @@ class Slots[T]:
     def __init__(
         self, chars: Collection[tuple[T, Sequence[str]]], columns: int = 3
     ) -> None:
+        if columns < 1:
+            raise ValueError(
+                f'number of columns must be greater than 0: {columns}'
+            )
         self.columns = [Column(chars) for _ in range(columns)]
 
     def randomize(
