@@ -99,6 +99,11 @@ class Slots[T]:
             col.spins = spin
 
     def rig_values(self, values: list[T]) -> None:
+        if len(self.columns) != len(values):
+            raise ValueError(
+                'number of columns and number of values are different: '
+                f'{len(self.columns)} {len(values)}'
+            )
         spin = 0
         for col, value in zip(self.columns, values):
             col.spins = spin + 1
