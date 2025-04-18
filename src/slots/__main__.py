@@ -69,7 +69,7 @@ def make_cli_parser() -> argparse.ArgumentParser:
 def cli(argv: Sequence[str] | None = None) -> None:
     parser = make_cli_parser()
     args = parser.parse_args(argv)
-    if args.columns < 0:
+    if args.columns <= 0:
         print_and_exit(
             f'number of columns must be greater than 0: {args.columns}'
         )
