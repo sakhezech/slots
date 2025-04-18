@@ -7,7 +7,7 @@ class Column[T]:
     def __init__(
         self,
         chars: list[tuple[T, str]],
-        spins: int,
+        spins: int = 0,
         start_idx: int = 0,
     ) -> None:
         self.charset = chars
