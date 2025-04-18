@@ -1,12 +1,12 @@
 import random
 import time
-from typing import Generator
+from typing import Collection, Generator, Sequence
 
 
 class Column[T]:
     def __init__(
         self,
-        chars: list[tuple[T, str]],
+        chars: Collection[tuple[T, str]],
         spins: int = 0,
         start_idx: int = 0,
     ) -> None:
@@ -86,7 +86,9 @@ class Column[T]:
 
 
 class Slots[T]:
-    def __init__(self, chars: list[tuple[T, str]], columns: int = 3) -> None:
+    def __init__(
+        self, chars: Collection[tuple[T, str]], columns: int = 3
+    ) -> None:
         self.columns = [Column(chars) for _ in range(columns)]
 
     def randomize(
@@ -98,7 +100,7 @@ class Slots[T]:
             spin += rand.randint(1, len(col.charset))
             col.spins = spin
 
-    def rig_values(self, values: list[T]) -> None:
+    def rig_values(self, values: Sequence[T]) -> None:
         if len(self.columns) != len(values):
             raise ValueError(
                 'number of columns and number of values are different: '
