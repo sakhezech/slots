@@ -86,20 +86,17 @@ class Column[T]:
 
 
 class Slots[T]:
-    def __init__(
-        self,
-        chars: list[tuple[T, str]],
-        columns: int = 3,
-        seed: int | str | bytes | bytearray | None = None,
-    ) -> None:
-        self.rand = random.Random(seed)
-        self.columns: list[Column] = []
+    def __init__(self, chars: list[tuple[T, str]], columns: int = 3) -> None:
+        self.columns = [Column(chars) for _ in range(columns)]
 
-        spin_num = 0
-        for _ in range(columns):
-            # HACK: arbitrary numbers
-            spin_num += self.rand.randint(1, 10)
-            self.columns.append(Column(chars, spin_num))
+    def randomize(
+        self, seed: int | str | bytes | bytearray | None = None
+    ) -> None:
+        rand = random.Random(seed)
+        spin = 0
+        for col in self.columns:
+            spin += rand.randint(1, len(col.charset))
+            col.spins = spin
 
     def get_values(self) -> list[T]:
         return [column.get_value() for column in self.columns]
