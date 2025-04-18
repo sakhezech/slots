@@ -131,13 +131,12 @@ class Slots[T]:
             if all(statuses):
                 break
 
-    def spin(self) -> None:
+    def spin(self, time_between_frames: float = 0.1) -> None:
         frame_lines = None
 
         for frame_lines in self.get_frames():
             print('\n'.join(frame_lines))
-            # HACK: arbitrary time
-            time.sleep(0.1)
+            time.sleep(time_between_frames)
             print(f'\x1b[{len(frame_lines)}A\r\x1b[J', end='')
 
         assert frame_lines
