@@ -95,10 +95,10 @@ class Slots[T]:
         self, seed: int | str | bytes | bytearray | None = None
     ) -> None:
         rand = random.Random(seed)
-        spin = 0
+        acc = 0
         for col in self.columns:
-            spin += rand.randint(1, len(col.charset))
-            col.spins = spin
+            acc += rand.randint(1, len(col.charset))
+            col.spins += acc
 
     def rig_values(self, values: Sequence[T]) -> None:
         if len(self.columns) != len(values):
@@ -106,11 +106,15 @@ class Slots[T]:
                 'number of columns and number of values are different: '
                 f'{len(self.columns)} {len(values)}'
             )
-        spin = 0
+        acc = 0
         for col, value in zip(self.columns, values):
-            col.spins = spin + 1
+            spin_before_rigging = col.spins
+
+            col.spins += 1 + acc
             col.rig_spin(value)
-            spin = col.spins
+
+            spin_after_rigging = col.spins
+            acc += spin_after_rigging - spin_before_rigging
 
     def get_values(self) -> list[T]:
         return [column.get_value() for column in self.columns]
