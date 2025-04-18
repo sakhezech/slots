@@ -98,6 +98,13 @@ class Slots[T]:
             spin += rand.randint(1, len(col.charset))
             col.spins = spin
 
+    def rig_values(self, values: list[T]) -> None:
+        spin = 0
+        for col, value in zip(self.columns, values):
+            col.spins = spin + 1
+            col.rig_spin(value)
+            spin = col.spins
+
     def get_values(self) -> list[T]:
         return [column.get_value() for column in self.columns]
 
