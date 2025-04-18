@@ -10,13 +10,15 @@ class Column[T]:
         spins: int,
         start_idx: int = 0,
     ) -> None:
-        self._charset = chars
-        self.chars: list[str] = []
+        self.charset = chars
+        self.spins = spins
+
+        self.charsheet: list[str] = []
         # HACK: hardcoded characters
         # get a list of characters, paddings, and separators here
         # and construct the list
         for _, char in chars:
-            self.chars.extend(
+            self.charsheet.extend(
                 [
                     '-----',
                     '|   |',
@@ -29,9 +31,8 @@ class Column[T]:
 
         self.count = 0
 
-        self.spins = spins
         self.offset = self.char_size + self.sep_size
-        self.max_idx = len(self._charset) * self.offset
+        self.max_idx = len(self.charset) * self.offset
         self.idx = start_idx * self.offset
 
         self._idx_to_val = {
@@ -50,14 +51,14 @@ class Column[T]:
 
     def rig_spin(self, value: T) -> None:
         # NOTE: can't use dict because values can be unhashible
-        for i, (v, _) in enumerate(self._charset):
+        for i, (v, _) in enumerate(self.charset):
             if v == value:
                 break
         else:
             raise ValueError
         curr = self.idx // self.offset
         to = i
-        self.spins += (to - curr) % len(self._charset)
+        self.spins += (to - curr) % len(self.charset)
 
     def get_value(self) -> T:
         return self._idx_to_val[self.idx]
@@ -66,10 +67,13 @@ class Column[T]:
         start = self.idx
         end = self.idx + self.offset + self.sep_size
 
-        if end > len(self.chars):
-            frame = self.chars[start:] + self.chars[: end - len(self.chars)]
+        if end > len(self.charsheet):
+            frame = (
+                self.charsheet[start:]
+                + self.charsheet[: end - len(self.charsheet)]
+            )
         else:
-            frame = self.chars[start:end]
+            frame = self.charsheet[start:end]
         return frame
 
     def advance_frame(self) -> bool:
@@ -85,15 +89,14 @@ class Slots[T]:
     def __init__(
         self,
         chars: list[tuple[T, str]],
-        num_of_columns: int = 3,
+        columns: int = 3,
         seed: int | str | bytes | bytearray | None = None,
     ) -> None:
-        self.num_of_columns = num_of_columns
         self.rand = random.Random(seed)
         self.columns: list[Column] = []
 
         spin_num = 0
-        for _ in range(self.num_of_columns):
+        for _ in range(columns):
             # HACK: arbitrary numbers
             spin_num += self.rand.randint(1, 10)
             self.columns.append(Column(chars, spin_num))
