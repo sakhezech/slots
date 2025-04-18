@@ -126,5 +126,5 @@ class Slots[T]:
             time.sleep(0.1)
             print(f'\x1b[{len(frame_lines)}A\r\x1b[J', end='')
 
-        if frame_lines:
-            print('\n'.join(frame_lines))
+        assert frame_lines
+        print('\n'.join(frame_lines))
