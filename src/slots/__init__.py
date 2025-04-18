@@ -59,7 +59,7 @@ class Column[T]:
         if (self._idx >= self.max_idx) or (self._idx < 0):
             self._idx %= self.max_idx
 
-    def rig_spin(self, value: T) -> None:
+    def rig_value(self, value: T) -> None:
         # NOTE: can't use dict because values can be unhashible
         for i, (v, _) in enumerate(self.charset):
             if v == value:
@@ -121,7 +121,7 @@ class Slots[T]:
             spin_before_rigging = col.spins
 
             col.spins += 1 + acc
-            col.rig_spin(value)
+            col.rig_value(value)
 
             spin_after_rigging = col.spins
             acc += spin_after_rigging - spin_before_rigging
