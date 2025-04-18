@@ -56,7 +56,7 @@ class Column[T]:
                 break
         else:
             raise ValueError(f'no such value: {value}')
-        curr = self.idx // self.offset
+        curr = self.spins
         to = i
         self.spins += (to - curr) % len(self.charset)
 
