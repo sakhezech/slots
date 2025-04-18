@@ -124,7 +124,7 @@ class Slots[T]:
             col.rig_value(value)
 
             spin_after_rigging = col.spins
-            acc += spin_after_rigging - spin_before_rigging
+            acc = spin_after_rigging - spin_before_rigging
 
     def get_values(self) -> list[T]:
         return [column.get_value() for column in self.columns]
