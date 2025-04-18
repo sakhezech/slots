@@ -149,16 +149,14 @@ class Slots[T]:
             if all(statuses):
                 break
 
-    def spin(self, time_between_frames: float = 0.1) -> None:
-        if time_between_frames <= 0:
-            raise ValueError(
-                f'period must be greater than 0: {time_between_frames}'
-            )
+    def spin(self, period: float = 0.1) -> None:
+        if period <= 0:
+            raise ValueError(f'period must be greater than 0: {period}')
         frame_lines = None
 
         for frame_lines in self.get_frames():
             print('\n'.join(frame_lines))
-            time.sleep(time_between_frames)
+            time.sleep(period)
             print(f'\x1b[{len(frame_lines)}A\r\x1b[J', end='')
 
         assert frame_lines
