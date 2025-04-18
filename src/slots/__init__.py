@@ -10,6 +10,7 @@ class Column[T]:
         spins: int,
         start_idx: int = 0,
     ) -> None:
+        self._charset = chars
         self.chars: list[str] = []
         # HACK: hardcoded characters
         # get a list of characters, paddings, and separators here
@@ -25,14 +26,13 @@ class Column[T]:
             )
         self.char_size = 3
         self.sep_size = 1
-        self.num_of_chars = len(chars)
 
         self.count = 0
 
+        self.spins = spins
         self.offset = self.char_size + self.sep_size
-        self.max_idx = self.num_of_chars * self.offset
+        self.max_idx = len(self._charset) * self.offset
         self.idx = start_idx * self.offset
-        self.steps_to_take = spins * self.offset
 
         self._idx_to_val = {
             i * self.offset: val for i, (val, _) in enumerate(chars)
@@ -47,6 +47,17 @@ class Column[T]:
         self._idx = value
         if (self._idx >= self.max_idx) or (self._idx < 0):
             self._idx %= self.max_idx
+
+    def rig_spin(self, value: T) -> None:
+        # NOTE: can't use dict because values can be unhashible
+        for i, (v, _) in enumerate(self._charset):
+            if v == value:
+                break
+        else:
+            raise ValueError
+        curr = self.idx // self.offset
+        to = i
+        self.spins += (to - curr) % len(self._charset)
 
     def get_value(self) -> T:
         return self._idx_to_val[self.idx]
@@ -63,7 +74,7 @@ class Column[T]:
 
     def advance_frame(self) -> bool:
         done = True
-        if self.count < self.steps_to_take:
+        if self.count < self.spins * self.offset:
             done = False
             self.count += 1
             self.idx += 1
