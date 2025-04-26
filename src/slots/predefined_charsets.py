@@ -2,9 +2,9 @@ small_nums = [
     (
         num,
         [
-            '|     |',
-            f'|{str(num).center(5)}|',
-            '|     |',
+            '|   |',
+            f'| {str(num)} |',
+            '|   |',
         ],
     )
     for num in range(0, 10)
