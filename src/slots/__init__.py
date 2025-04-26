@@ -149,7 +149,7 @@ class Slots[T]:
             if all(statuses):
                 break
 
-    def spin(self, period: float = 0.1) -> None:
+    def spin(self, period: float = 0.05) -> None:
         if period <= 0:
             raise ValueError(f'period must be greater than 0: {period}')
         frame_lines = None
