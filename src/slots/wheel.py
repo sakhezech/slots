@@ -75,15 +75,14 @@ class Wheel[T]:
 
     def get_frame(self) -> list[str]:
         start = self.idx
-        end = self.idx + self.window_size
+        repeats, end = divmod(
+            self.idx + self.window_size, len(self.charsheet[0])
+        )
 
-        if end > len(self.charsheet[0]):
-            frame = [
-                line[self.idx :] + line[: end - len(self.charsheet[0])]
-                for line in self.charsheet
-            ]
-        else:
-            frame = [line[start:end] for line in self.charsheet]
+        frame = [
+            line[start:] + line * (repeats - 1) + line[:end]
+            for line in self.charsheet
+        ]
         frame.append(self.arrow_line)
         return frame
 
