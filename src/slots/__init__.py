@@ -1,6 +1,8 @@
 import random
 import time
-from typing import Collection, Generator, Sequence
+from typing import Callable, Collection, Generator, Sequence
+
+from .modifier_functions import linear
 
 
 class Column[T]:
@@ -149,14 +151,23 @@ class Slots[T]:
             if all(statuses):
                 break
 
-    def spin(self, period: float = 0.05) -> None:
+    def spin(
+        self,
+        period: float = 0.05,
+        modifier: Callable[[float, float], float] | None = None,
+    ) -> None:
         if period <= 0:
             raise ValueError(f'period must be greater than 0: {period}')
+        if modifier is None:
+            modifier = linear
         frame_lines = None
 
-        for frame_lines in self.get_frames():
+        frames = list(self.get_frames())
+        number_of_frames = len(frames)
+
+        for i, frame_lines in enumerate(frames):
             print('\n'.join(frame_lines))
-            time.sleep(period)
+            time.sleep(modifier(period, i / number_of_frames))
             print(f'\x1b[{len(frame_lines)}A\r\x1b[J', end='')
 
         assert frame_lines
