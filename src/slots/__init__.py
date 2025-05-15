@@ -1,8 +1,22 @@
 import random
 import time
-from typing import Callable, Collection, Generator, Sequence
+from typing import Callable, Collection, Generator, Protocol, Sequence
 
 from .modifier_functions import linear
+
+
+class Spinnable[T](Protocol):
+    spins: int
+    charset: Collection[tuple[T, Sequence[str]]]
+
+    def __init__(
+        self, chars: Collection[tuple[T, Sequence[str]]], *args, **kwargs
+    ) -> None: ...
+
+    def rig_value(self, value: T) -> None: ...
+    def get_value(self) -> T: ...
+    def get_frame(self) -> list[str]: ...
+    def advance_frame(self) -> bool: ...
 
 
 class Column[T]:
@@ -99,13 +113,14 @@ class Column[T]:
 
 class Slots[T]:
     def __init__(
-        self, chars: Collection[tuple[T, Sequence[str]]], columns: int = 3
+        self,
+        columns: list[Spinnable[T]],
     ) -> None:
-        if columns < 1:
+        if len(columns) < 1:
             raise ValueError(
-                f'number of columns must be greater than 0: {columns}'
+                f'number of columns must be greater than 0: {len(columns)}'
             )
-        self.columns = [Column(chars) for _ in range(columns)]
+        self.columns = columns
 
     def randomize(
         self, seed: int | str | bytes | bytearray | None = None

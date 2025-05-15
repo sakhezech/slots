@@ -2,7 +2,7 @@ import argparse
 import sys
 from typing import NoReturn, Sequence
 
-from . import Slots
+from . import Column, Slots
 from .__version__ import __version__
 from .predefined_charsets import _charsets
 
@@ -74,7 +74,7 @@ def cli(argv: Sequence[str] | None = None) -> None:
             f'number of columns must be greater than 0: {args.columns}'
         )
     chars = [(str(value), char) for value, char in _charsets[args.chars]]
-    slots = Slots(chars, args.columns)
+    slots = Slots([Column(chars) for _ in range(args.columns)])
     run_slots(slots, args)
 
 
