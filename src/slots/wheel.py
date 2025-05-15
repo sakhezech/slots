@@ -79,10 +79,13 @@ class Wheel[T]:
             self.idx + self.window_size, len(self.charsheet[0])
         )
 
-        frame = [
-            line[start:] + line * (repeats - 1) + line[:end]
-            for line in self.charsheet
-        ]
+        if repeats:
+            frame = [
+                line[start:] + line * (repeats - 1) + line[:end]
+                for line in self.charsheet
+            ]
+        else:
+            frame = [line[start:end] for line in self.charsheet]
         frame.append(self.arrow_line)
         return frame
 
