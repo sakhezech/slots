@@ -67,6 +67,17 @@ class Wheel[T]:
         if (self._idx >= self.max_idx) or (self._idx < 0):
             self._idx %= self.max_idx
 
+    def rig_value(self, value: T) -> None:
+        # NOTE: can't use dict because values can be unhashible
+        for i, (v, _) in enumerate(self.charset):
+            if v == value:
+                break
+        else:
+            raise ValueError(f'no such value: {value}')
+        curr = self.spins
+        to = i
+        self.spins += (to - curr) % len(self.charset)
+
     def get_value(self) -> T:
         self.idx += self._res_idx_offset
         idx = self.idx
