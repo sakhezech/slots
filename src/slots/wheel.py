@@ -7,9 +7,12 @@ class Wheel[T]:
         chars: Collection[tuple[T, Sequence[str]]],
         spins: int = 0,
         start_idx: int = 0,
+        window_size: int | None = None,
     ) -> None:
         self.charset = chars
         self.spins = spins
+        if window_size is None:
+            window_size = len(self.charset)
 
         height = -1
         width = -1
@@ -28,8 +31,8 @@ class Wheel[T]:
 
         self.offset = width
 
-        left_chars = len(self.charset) // 2
-        right_chars = len(self.charset) - left_chars - 1
+        left_chars = window_size // 2
+        right_chars = window_size - left_chars - 1
         self.arrow_line = (
             ' ' * left_chars * self.offset
             + '^'.center(self.offset)
@@ -46,7 +49,7 @@ class Wheel[T]:
 
         self.count = 0
 
-        self.window_size = len(self.charset) * self.offset
+        self.window_size = window_size * self.offset
         self.max_idx = len(self.charset) * self.offset
         self.idx = (start_idx - left_chars) * self.offset
 
