@@ -2,8 +2,9 @@ import argparse
 import sys
 from typing import NoReturn, Sequence
 
-from . import Column, Slots
+from . import Slots
 from .__version__ import __version__
+from .column import Column
 from .predefined_charsets import _charsets
 
 
