@@ -26,6 +26,17 @@ class Wheel[T]:
             ):
                 raise ValueError('not all characters have the same size')
 
+        self.offset = width
+
+        left_chars = len(self.charset) // 2
+        right_chars = len(self.charset) - left_chars - 1
+        self.arrow_line = (
+            ' ' * left_chars * self.offset
+            + '^'.center(self.offset)
+            + ' ' * right_chars * self.offset
+        )
+        self._res_idx_offset = left_chars * self.offset
+
         self.charsheet = [
             ''.join([char_lines[idx] for _, char_lines in self.charset])
             for idx in range(height)
@@ -35,10 +46,9 @@ class Wheel[T]:
 
         self.count = 0
 
-        self.offset = width
         self.window_size = len(self.charset) * self.offset
         self.max_idx = len(self.charset) * self.offset
-        self.idx = start_idx * self.offset
+        self.idx = (start_idx - left_chars) * self.offset
 
         self._idx_to_val = {
             i * self.offset: val for i, (val, _) in enumerate(chars)
@@ -55,7 +65,10 @@ class Wheel[T]:
             self._idx %= self.max_idx
 
     def get_value(self) -> T:
-        return self._idx_to_val[self.idx]
+        self.idx += self._res_idx_offset
+        idx = self.idx
+        self.idx -= self._res_idx_offset
+        return self._idx_to_val[idx]
 
     def get_frame(self) -> list[str]:
         start = self.idx
@@ -68,6 +81,7 @@ class Wheel[T]:
             ]
         else:
             frame = [line[start:end] for line in self.charsheet]
+        frame.append(self.arrow_line)
         return frame
 
     def advance_frame(self) -> bool:
